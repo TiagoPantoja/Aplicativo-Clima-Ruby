@@ -3,13 +3,9 @@ require 'URI'
 require 'JSON'
 require 'rubygems'
 
-# gem install debase            used for earlier debugging
-# gem install ruby-debug-ide
-
-
 class RubyWeather
 
-    def runRubyWeather() # run method calling find IP and find LatLong methods
+    def runRubyWeather()
 
         city = findIP()
         findLatLong(city)
@@ -18,14 +14,13 @@ class RubyWeather
 
         ip_response = Net::HTTP.get(URI("https://ip-fast.com/api/ip/?format=json&location=true"))
 
-        obj = JSON.parse(ip_response)# parsing json object
-        city = obj['city'] # finding city name in json object
+        obj = JSON.parse(ip_response)
+        city = obj['city'] 
 
         puts "Your city is: " + city
         return city
     end
-
-    #geocodeing below
+    
     def findLatLong(city)
 
         uri = URI('https://geocode.xyz')
@@ -34,30 +29,29 @@ class RubyWeather
                 'locate' => city ,
                 'geoit' => 'JSON'}
 
-        uri.query = URI.encode_www_form(params) # quering above parameters to find code
+        uri.query = URI.encode_www_form(params) 
 
-        response = Net::HTTP.get(uri) # getting response from query
+        response = Net::HTTP.get(uri) 
 
-        longLatt = JSON.parse(response) # parsing JSON object for location
+        longLatt = JSON.parse(response) n
 
-        puts 'Enter your state/province for location' # asking user for state/province located
+        puts 'Enter your state/province for location'
         province = gets.chomp
 
-        if longLatt["prov"] == province  # boolean statment to determin correct state
+        if longLatt["prov"] == province  
             longitude = obj.gets("longt")
             latitude = obj.gets("latt")
         end
 
-        self.findWeather(latitude, longitude) # calling find weather next method
+        self.findWeather(latitude, longitude) 
 
     end
-
-    # get max and min, and print temperatures
+    
     def findWeather(latitude, longitude)
 
         uriWeather = URI('https://api.open-meteo.com/v1/forecast?latitude=35.74&longitude=-78.86&daily=temperature_2m_max,temperature_2m_min')
 
-        params = {              #parameters for specified weather API search
+        params = { 
             'latitude' => latitude,
             'longitude' => longitude,
             'daily' => 'temperature_2m_max, temperature_2m_min',
@@ -66,9 +60,9 @@ class RubyWeather
             'timezone' => 'America%2FNew_York'
             }
 
-        uriWeather.query = URI.encode_www_form(params) # quering the parmeters from above
+        uriWeather.query = URI.encode_www_form(params) 
 
-        localWeather = Net::HTTP.get(uriWeather)# getting response from above query
+        localWeather = Net::HTTP.get(uriWeather)
 
         obj_weather = JSON.parse(localWeather)
 
@@ -77,27 +71,27 @@ class RubyWeather
             puts max_seven
             puts min_seven
 
-        for index in max_seven do # for loop for 7 day week high
+        for index in max_seven do 
                 puts index
 
-            intArray = Array.new(7)# array to store the 7 day high
+            intArray = Array.new(7)
             for i in index do
-                puts intArray(i)# printing list of 7 day highs
+                puts intArray(i)
                 i = i + 1
             end
         end
 
-        for index in min_seven do # for loop for 7 day week low
+        for index in min_seven do 
             puts index
 
-           intArray = Array.new(7)# array to store the 7 day lows
+           intArray = Array.new(7)
            for i in index do
-               puts intArray(i)# printing list of 7 day lows
+               puts intArray(i)
                i = i + 1
            end
         end
     end
 end
 
-obj = RubyWeather.new # creating a new ruby object !!!!!!!!!THIS IS WHERE THE CODE STARTS!!!!!!!!
-obj.runRubyWeather # using this object to call my run method listed at the top of class
+obj = RubyWeather.new
+obj.runRubyWeather 
